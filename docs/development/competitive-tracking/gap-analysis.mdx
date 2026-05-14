@@ -1,0 +1,49 @@
+---
+title: "Gap analysis"
+description: "Missing features with score >= 30, with implementation hints and priority recommendations."
+---
+
+Issues marked **Missing** with a score of 30 or higher. The set includes open and closed TablePlus issues. A closed-but-Missing item means TablePlus closed the issue without shipping a fix that covers TablePro; verify whether the underlying ask still applies before acting on it.
+
+Priority bands:
+
+- **P0** (score >= 200): next milestone
+- **P1** (score 75 to 199): this quarter
+- **P2** (score 40 to 74): this year
+- **P3** (score 30 to 39): later
+
+| Issue | Title | State | Score | Priority | Hint |
+| --- | --- | --- | --- | --- | --- |
+| [#1056](https://github.com/TablePlus/TablePlus/issues/1056) | Linux version | Closed | 327.0 | P0 | Native macOS/iOS only by design; a Linux port is a separate codebase, not on the roadmap. TablePlus closed without resolution; verify the ask still applies |
+| [#425](https://github.com/TablePlus/TablePlus/issues/425) | Full text search in whole database | Closed | 86.5 | P1 | Cross-table full text search. Run a FTS query across all tables in a schema; needs per-driver fan-out. TablePlus closed without resolution; verify the ask still applies |
+| [#2798](https://github.com/TablePlus/TablePlus/issues/2798) | Feature Request: Support Athena Driver | Open | 71.5 | P2 | Athena driver. New plugin bundle over the AWS SDK |
+| [#1734](https://github.com/TablePlus/TablePlus/issues/1734) | [Feature Request] InfluxDB support | Open | 71.0 | P2 | InfluxDB driver. New plugin bundle, line-protocol or Flux client |
+| [#607](https://github.com/TablePlus/TablePlus/issues/607) | new feature: order columns in table structure through drag and drop | Open | 64.5 | P2 | Drag-to-reorder columns in Structure view; today only sort and resize exist |
+| [#1118](https://github.com/TablePlus/TablePlus/issues/1118) | [Feature request] Check Constraints in Structure View | Open | 60.0 | P2 | Show CHECK constraints in Structure view; extend schema introspection per driver |
+| [#223](https://github.com/TablePlus/TablePlus/issues/223) | Feature request: connects to analytics databases | Closed | 56.0 | P2 | Analytics engines (Snowflake, Trino, Athena). Each is one new plugin bundle. TablePlus closed without resolution; verify the ask still applies |
+| [#9](https://github.com/TablePlus/TablePlus/issues/9) | Windows and Linux releases. | Closed | 44.0 | P2 | Windows and Linux builds. Out of scope: TablePro is native macOS/iOS. TablePlus closed without resolution; verify the ask still applies |
+| [#1022](https://github.com/TablePlus/TablePlus/issues/1022) | Feature Request: UI for psql sequence | Closed | 42.5 | P2 | Sequence editor UI for PostgreSQL; create, alter, inspect sequences. TablePlus closed without resolution; verify the ask still applies |
+| [#2706](https://github.com/TablePlus/TablePlus/issues/2706) | Feature request: AWS Athena Driver | Open | 39.5 | P3 | Athena driver (duplicate demand with #2798) |
+| [#1150](https://github.com/TablePlus/TablePlus/issues/1150) | Snowflake connection parameters | Open | 38.0 | P3 | Snowflake driver. New plugin bundle over the Snowflake connector |
+| [#2531](https://github.com/TablePlus/TablePlus/issues/2531) | Tableplus, AWS ssm bastion, and IAM authentication | Closed | 37.5 | P3 | SSH over AWS SSM bastion plus IAM auth. Needs an SSM proxy command path. TablePlus closed without resolution; verify the ask still applies |
+| [#790](https://github.com/TablePlus/TablePlus/issues/790) | [Feature Request] Firebird SQL Support | Open | 36.0 | P3 | Firebird SQL driver. Small bundle around libfbclient |
+| [#83](https://github.com/TablePlus/TablePlus/issues/83) | List of connections just dissapeared | Closed | 35.5 | P3 | Bug: connection list vanished. Verify ConnectionStorage and sync delete-ordering invariant. TablePlus closed without resolution; verify the ask still applies |
+| [#338](https://github.com/TablePlus/TablePlus/issues/338) | DB Auto-Refresh Feature | Closed | 35.5 | P3 | Configurable auto-refresh interval for the data grid. TablePlus closed without resolution; verify the ask still applies |
+| [#887](https://github.com/TablePlus/TablePlus/issues/887) | Application unresponsive during larger queries on Snowflake | Closed | 35.5 | P3 | Snowflake driver missing; the perf complaint is a symptom of no native driver. TablePlus closed without resolution; verify the ask still applies |
+| [#1275](https://github.com/TablePlus/TablePlus/issues/1275) | Connection to Postgres over SSH fails after upgrade to version 228 or later version of tableplus | Open | 33.5 | P3 | Bug: Postgres-over-SSH regression. Verify against LibSSH2Tunnel and ConnectionHealthMonitor |
+| [#1879](https://github.com/TablePlus/TablePlus/issues/1879) | Memory leak when idle | Closed | 31.5 | P3 | Bug: idle memory growth. Profile long-lived windows and result caches. TablePlus closed without resolution; verify the ask still applies |
+| [#496](https://github.com/TablePlus/TablePlus/issues/496) | can't be opend | Closed | 31.0 | P3 | Bug: app fails to open. Too vague to action; verify whether it reproduces on macOS 14+. TablePlus closed without resolution; verify the ask still applies |
+| [#2015](https://github.com/TablePlus/TablePlus/issues/2015) | MacOS: If two screens are attached, TablePlus starts outside the view | Closed | 31.0 | P3 | Bug: window opens off-screen on multi-display setups. Verify EditorWindow frame restore. TablePlus closed without resolution; verify the ask still applies |
+
+## Recommendations
+
+The biggest cluster is **database driver** gaps (9 of 20 items): Athena (#2798, #2706), InfluxDB (#1734), Snowflake (#1150), Firebird (#790), and the broad "analytics databases" ask (#223). Each is bounded to one new plugin bundle; the system already ships 17 drivers. Athena and InfluxDB are the highest-scoring single missing drivers.
+
+**Linux** (#1056) and **Windows and Linux** (#9) top the list by score but are out of scope: TablePro is native macOS and iOS by design. They stay in the table as demand signal, not as planned work.
+
+The two non-driver feature gaps are **drag-to-reorder columns in Structure view** (#607) and **CHECK constraints in Structure view** (#1118). Both are bounded data-grid work and also show up in [quick wins](/development/competitive-tracking/quick-wins).
+
+Several closed entries are **bug classes** worth a regression check: connection list vanishing (#83), idle memory growth (#1879), Postgres-over-SSH regression (#1275), and off-screen windows on multi-display setups (#2015). TablePlus closed them; confirm TablePro is not hit by the same class.
+
+Total Missing items in this dataset: 239. The 20 above are the high-impact ones; the long tail (`score < 30`) sits in [by category](/development/competitive-tracking/by-category) for opportunistic pickup.
+
