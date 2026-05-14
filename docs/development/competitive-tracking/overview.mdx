@@ -7,7 +7,7 @@ Last updated: 2026-05-14
 
 ## What this is
 
-A snapshot of 292 issues from the TablePlus public tracker, cross-referenced against the TablePro feature inventory on `main`. The set includes both open and closed TablePlus issues. A closed TablePlus issue does not mean TablePro has solved it: it may be a bug that still affects TablePro, a feature TablePlus shipped that TablePro has not, or a request TablePlus declined that users still want. Closed issues are kept only when they still map to a TablePro gap or bug class. Issues that cannot inform any TablePro work are excluded; see [Excluded issues](#excluded-issues) below. The goal is to see, at a glance, which heavily-requested asks TablePro already covers, which are partial, and which are gaps worth prioritizing.
+A snapshot of 292 issues from the TablePlus public tracker, cross-referenced against the TablePro feature inventory on `main`. The set includes both open and closed TablePlus issues. A closed TablePlus issue does not mean TablePro has solved it: it may be a bug that still affects TablePro, a feature TablePlus shipped that TablePro has not, or a request TablePlus declined that users still want. Closed issues are kept only when they still map to a TablePro gap or bug class. The goal is to see, at a glance, which heavily-requested asks TablePro already covers, which are partial, and which are gaps worth prioritizing.
 
 This is internal tracking, not a marketing comparison.
 
@@ -18,10 +18,9 @@ This is internal tracking, not a marketing comparison.
 3. Categorize each issue into one of: database driver, data grid, editor, SSH and tunneling, import and export, UI / UX, connection form, sync, AI and MCP, security, plugin system, platform, other.
 4. Mark status against TablePro: `ALREADY_DONE`, `PARTIAL`, `MISSING`, or `OUT_OF_SCOPE`. Status comes from the `tablepro-feature-inventory.md` snapshot taken 2026-05-14, then re-verified against the live `main` source rather than the inventory snapshot alone. The re-check moved 25 issues to a more accurate status.
 5. Drop closed issues that map cleanly to `ALREADY_DONE`: those describe asks TablePro already covers and add no signal. Keep every open issue, and keep closed issues that are `MISSING` or `PARTIAL`, carry the `bug` label, or have no clear fix in TablePro.
-6. Exclude issues that cannot inform any TablePro work: TablePlus pricing, licensing, or account-service questions; TablePlus website, roadmap, or company-process threads; thank-you notes and opinions with no concrete request or reproducible bug; one-line reports too vague to use even as a bug-class signal; and pure duplicates of a higher-scored issue already in the set. The rule is conservative: when in doubt, the issue is kept. Excluded issues are listed in [Excluded issues](#excluded-issues).
-7. Compute a priority score: `reactions + (comments * 0.5)` plus `+20` if the issue carries the `bug` label.
+6. Compute a priority score: `reactions + (comments * 0.5)` plus `+20` if the issue carries the `bug` label.
 
-After the merge, the closed-issue filter, and the exclusion step, 292 issues remain: 142 open and 150 closed.
+After the merge and the closed-issue filter, 292 issues remain: 142 open and 150 closed.
 
 ## Headline numbers
 
@@ -88,22 +87,7 @@ Requires `gh` (authenticated) and `jq`.
 
 **2. Re-audit the TablePro feature inventory.** Walk `Plugins/`, `Core/`, `Views/`, and `docs/` to mark each feature `SHIPPED`, `PARTIAL`, or `NOT_SHIPPED`. The previous snapshot lives in this commit history under the docs-writer team transcript.
 
-**3. Merge, re-categorize, and re-score.** Merge the two JSON files by issue number. Drop closed issues that map cleanly to `ALREADY_DONE`. Apply the exclusion rule (methodology step 6) and record each removed issue in the Excluded issues table. For each remaining issue, assign a category, mark TablePro status (`ALREADY_DONE`, `PARTIAL`, `MISSING`, `OUT_OF_SCOPE`), and compute the score: `reactions + comments * 0.5`, plus `+20` if the issue carries the `bug` label.
+**3. Merge, re-categorize, and re-score.** Merge the two JSON files by issue number. Drop closed issues that map cleanly to `ALREADY_DONE`. For each remaining issue, assign a category, mark TablePro status (`ALREADY_DONE`, `PARTIAL`, `MISSING`, `OUT_OF_SCOPE`), and compute the score: `reactions + comments * 0.5`, plus `+20` if the issue carries the `bug` label.
 
 **4. Rewrite the four data pages** (`top-requests`, `by-category`, `gap-analysis`, `quick-wins`) and bump the **Last updated** date plus the headline tables on this page.
-
-## Excluded issues
-
-Issues removed under methodology step 6, because they cannot inform any TablePro work.
-
-| Issue | Title | Rule |
-| --- | --- | --- |
-| [#489](https://github.com/TablePlus/TablePlus/issues/489) | The best database client I've ever tried! | Thank-you note, no concrete request |
-| [#367](https://github.com/TablePlus/TablePlus/issues/367) | Congrats Huy and TablePlus team! | Thank-you note, no concrete request |
-| [#1868](https://github.com/TablePlus/TablePlus/issues/1868) | Just absolutely great | Thank-you note, no concrete request |
-| [#318](https://github.com/TablePlus/TablePlus/issues/318) | where is my email account??? | TablePlus account-service question |
-| [#2554](https://github.com/TablePlus/TablePlus/issues/2554) | Duplicate entire MySQL database and content | Duplicate of higher-scored #1152 |
-| [#3222](https://github.com/TablePlus/TablePlus/issues/3222) | Are there any plans to support Google Cloud Spanner | Duplicate of higher-scored #3290 |
-| [#3124](https://github.com/TablePlus/TablePlus/issues/3124) | firebase support | Duplicate of higher-scored #506 |
-| [#2333](https://github.com/TablePlus/TablePlus/issues/2333) | "TablePlus doesn't support renaming MySQL database" ? | Duplicate of higher-scored #1028 |
 
