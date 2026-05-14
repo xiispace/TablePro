@@ -14,15 +14,15 @@ Priority bands:
 
 | Issue | Title | State | Score | Priority | Hint |
 | --- | --- | --- | --- | --- | --- |
-| [#1056](https://github.com/TablePlus/TablePlus/issues/1056) | Linux version | Closed | 327.0 | P0 | Native macOS/iOS only by design; a Linux port is a separate codebase, not on the roadmap. TablePlus closed without resolution; verify the ask still applies |
 | [#425](https://github.com/TablePlus/TablePlus/issues/425) | Full text search in whole database | Closed | 86.5 | P1 | Cross-table full text search. Run a FTS query across all tables in a schema; needs per-driver fan-out. TablePlus closed without resolution; verify the ask still applies |
 | [#2798](https://github.com/TablePlus/TablePlus/issues/2798) | Feature Request: Support Athena Driver | Open | 71.5 | P2 | Athena driver. New plugin bundle over the AWS SDK |
 | [#1734](https://github.com/TablePlus/TablePlus/issues/1734) | [Feature Request] InfluxDB support | Open | 71.0 | P2 | InfluxDB driver. New plugin bundle, line-protocol or Flux client |
-| [#607](https://github.com/TablePlus/TablePlus/issues/607) | new feature: order columns in table structure through drag and drop | Open | 64.5 | P2 | Drag-to-reorder columns in Structure view; today only sort and resize exist |
+| [#2952](https://github.com/TablePlus/TablePlus/issues/2952) | Support for editing SQLite over ssh | Open | 64.0 | P2 | SQLite is `connectionMode = .fileBased` with `supportsSSH = false`. SSH tunneling only forwards TCP ports, so a file on a remote host is unreachable. Would need a remote-file mount or fetch path |
+| [#3355](https://github.com/TablePlus/TablePlus/issues/3355) | Determine file type from metadata rather than extension | Open | 60.0 | P2 | File detection (`URLClassifier.classifyFile`) is 100% extension-based. Add magic-byte or UTType sniffing in the file-open path |
 | [#1118](https://github.com/TablePlus/TablePlus/issues/1118) | [Feature request] Check Constraints in Structure View | Open | 60.0 | P2 | Show CHECK constraints in Structure view; extend schema introspection per driver |
 | [#223](https://github.com/TablePlus/TablePlus/issues/223) | Feature request: connects to analytics databases | Closed | 56.0 | P2 | Analytics engines (Snowflake, Trino, Athena). Each is one new plugin bundle. TablePlus closed without resolution; verify the ask still applies |
-| [#9](https://github.com/TablePlus/TablePlus/issues/9) | Windows and Linux releases. | Closed | 44.0 | P2 | Windows and Linux builds. Out of scope: TablePro is native macOS/iOS. TablePlus closed without resolution; verify the ask still applies |
-| [#1022](https://github.com/TablePlus/TablePlus/issues/1022) | Feature Request: UI for psql sequence | Closed | 42.5 | P2 | Sequence editor UI for PostgreSQL; create, alter, inspect sequences. TablePlus closed without resolution; verify the ask still applies |
+| [#1324](https://github.com/TablePlus/TablePlus/issues/1324) | [Feature Request] Database syncing | Open | 44.0 | P2 | Only app-metadata sync exists (connections, tags, settings via CloudKit). The ask is DB-to-DB schema and data sync, which has no implementation |
+| [#1339](https://github.com/TablePlus/TablePlus/issues/1339) | SSH to remote SQLite DB | Open | 44.0 | P2 | Same architecture limit as #2952: SQLite is `.fileBased` with `supportsSSH = false` |
 | [#2706](https://github.com/TablePlus/TablePlus/issues/2706) | Feature request: AWS Athena Driver | Open | 39.5 | P3 | Athena driver (duplicate demand with #2798) |
 | [#1150](https://github.com/TablePlus/TablePlus/issues/1150) | Snowflake connection parameters | Open | 38.0 | P3 | Snowflake driver. New plugin bundle over the Snowflake connector |
 | [#2531](https://github.com/TablePlus/TablePlus/issues/2531) | Tableplus, AWS ssm bastion, and IAM authentication | Closed | 37.5 | P3 | SSH over AWS SSM bastion plus IAM auth. Needs an SSM proxy command path. TablePlus closed without resolution; verify the ask still applies |
@@ -37,13 +37,15 @@ Priority bands:
 
 ## Recommendations
 
-The biggest cluster is **database driver** gaps (9 of 20 items): Athena (#2798, #2706), InfluxDB (#1734), Snowflake (#1150), Firebird (#790), and the broad "analytics databases" ask (#223). Each is bounded to one new plugin bundle; the system already ships 17 drivers. Athena and InfluxDB are the highest-scoring single missing drivers.
+The biggest cluster is **database driver** gaps (7 of 20 items): Athena (#2798, #2706), InfluxDB (#1734), Snowflake (#1150), Firebird (#790), and the broad "analytics databases" ask (#223). Each is bounded to one new plugin bundle; the system already ships 17 drivers. Athena and InfluxDB are the highest-scoring single missing drivers.
 
-**Linux** (#1056) and **Windows and Linux** (#9) top the list by score but are out of scope: TablePro is native macOS and iOS by design. They stay in the table as demand signal, not as planned work.
+**SSH to file-based databases** (#2952, #1339) is an architecture gap, not missing UI. SQLite is `connectionMode = .fileBased` with `supportsSSH = false`; SSH tunneling only forwards TCP ports, so it cannot reach a file on a remote host. Supporting it needs a remote-file mount or fetch path.
 
-The two non-driver feature gaps are **drag-to-reorder columns in Structure view** (#607) and **CHECK constraints in Structure view** (#1118). Both are bounded data-grid work and also show up in [quick wins](/development/competitive-tracking/quick-wins).
+The remaining non-driver gaps are **file-type detection by metadata** (#3355), **database syncing** (#1324, DB-to-DB schema and data sync, distinct from the app-metadata sync that already ships), and **CHECK constraints in Structure view** (#1118). #1118 is bounded data-grid work and also shows up in [quick wins](/development/competitive-tracking/quick-wins).
 
 Several closed entries are **bug classes** worth a regression check: connection list vanishing (#83), idle memory growth (#1879), Postgres-over-SSH regression (#1275), and off-screen windows on multi-display setups (#2015). TablePlus closed them; confirm TablePro is not hit by the same class.
 
-Total Missing items in this dataset: 239. The 20 above are the high-impact ones; the long tail (`score < 30`) sits in [by category](/development/competitive-tracking/by-category) for opportunistic pickup.
+**Linux** (#1056) and **Windows and Linux** (#9) are the highest-scoring requests in the tracker but are out of scope: TablePro is native macOS and iOS by design. They are tracked as `Out of scope` in [by category](/development/competitive-tracking/by-category), not as gaps.
+
+Total Missing items in this dataset: 246. The 20 above are the high-impact ones; the long tail (`score < 30`) sits in [by category](/development/competitive-tracking/by-category) for opportunistic pickup.
 

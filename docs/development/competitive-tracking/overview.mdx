@@ -16,7 +16,7 @@ This is internal tracking, not a marketing comparison.
 1. Fetch all issues (open and closed) from `TablePlus/TablePlus`, ranked by reactions and by comments. The helper script tags each entry with its `state` (`open` or `closed`) and `closed_at`.
 2. Merge the reactions list and the comments list, deduplicated by issue number.
 3. Categorize each issue into one of: database driver, data grid, editor, SSH and tunneling, import and export, UI / UX, connection form, sync, AI and MCP, security, plugin system, platform, other.
-4. Mark status against TablePro: `ALREADY_DONE`, `PARTIAL`, `MISSING`, or `OUT_OF_SCOPE`. Status comes from the `tablepro-feature-inventory.md` snapshot taken 2026-05-14.
+4. Mark status against TablePro: `ALREADY_DONE`, `PARTIAL`, `MISSING`, or `OUT_OF_SCOPE`. Status comes from the `tablepro-feature-inventory.md` snapshot taken 2026-05-14, then re-verified against the live `main` source rather than the inventory snapshot alone. The re-check moved 25 issues to a more accurate status.
 5. Drop closed issues that map cleanly to `ALREADY_DONE`: those describe asks TablePro already covers and add no signal. Keep every open issue, and keep closed issues that are `MISSING` or `PARTIAL`, carry the `bug` label, or have no clear fix in TablePro.
 6. Compute a priority score: `reactions + (comments * 0.5)` plus `+20` if the issue carries the `bug` label.
 
@@ -26,10 +26,10 @@ After the merge and the closed-issue filter, 300 issues remain: 147 open and 153
 
 | Status | Count |
 | --- | --- |
-| Already done | 25 |
-| Partial | 32 |
-| Missing | 239 |
-| Out of scope | 4 |
+| Already done | 23 |
+| Partial | 25 |
+| Missing | 246 |
+| Out of scope | 6 |
 | **Total** | 300 |
 
 By state:
