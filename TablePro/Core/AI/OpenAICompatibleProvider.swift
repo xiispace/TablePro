@@ -87,9 +87,6 @@ final class OpenAICompatibleProvider: ChatTransport {
         }
     }
 
-    /// Decodes one streaming line. OpenAI/OpenRouter/Custom use SSE framing
-    /// (`data: {...}`); Ollama emits NDJSON (one JSON object per line). The
-    /// `[DONE]` sentinel returns nil; the caller should break on it.
     static func decodeStreamLine(_ line: String, providerType: AIProviderType) -> [String: Any]? {
         let jsonString: String
         if providerType == .ollama {
@@ -107,10 +104,6 @@ final class OpenAICompatibleProvider: ChatTransport {
         return json
     }
 
-    /// Translate one chunk JSON to events. Mutates state to thread tool-call
-    /// index→id mapping, ordering, and token counters across chunks.
-    /// Returns `(events, shouldBreak)` so the caller can stop the stream when
-    /// Ollama emits `done: true`.
     static func parseChunk(
         _ json: [String: Any],
         state: inout OpenAIStreamState
@@ -152,9 +145,6 @@ final class OpenAICompatibleProvider: ChatTransport {
             state.outputTokens = evalCount
         }
 
-        // Ollama signals stream-end via `done: true`. We flush again here only
-        // when finish_reason didn't already drain the tool-call map (which
-        // typically isn't set on Ollama responses).
         let shouldBreak = (json["done"] as? Bool) == true
         if shouldBreak, !state.toolCallIndexToId.isEmpty {
             events.append(contentsOf: state.flushToolUseEnds())
@@ -360,6 +350,10 @@ final class OpenAICompatibleProvider: ChatTransport {
             if case .toolResult(let resultBlock) = block.kind { return resultBlock }
             return nil
         }
+        let imageBlocks = turn.blocks.compactMap { block -> ChatImageInput? in
+            if case .image(let input) = block.kind { return input }
+            return nil
+        }
         let textContent = turn.plainText
 
         if turn.role == .assistant, !toolUseBlocks.isEmpty {
@@ -399,11 +393,39 @@ final class OpenAICompatibleProvider: ChatTransport {
             return messages
         }
 
+        if turn.role == .user, !imageBlocks.isEmpty {
+            var parts: [[String: Any]] = []
+            if !textContent.isEmpty {
+                parts.append(["type": "text", "text": textContent])
+            }
+            for image in imageBlocks {
+                if let part = chatCompletionsImagePart(image) {
+                    parts.append(part)
+                }
+            }
+            guard !parts.isEmpty else { return [] }
+            return [[
+                "role": "user",
+                "content": parts
+            ]]
+        }
+
         guard !textContent.isEmpty else { return [] }
         return [[
             "role": turn.role.rawValue,
             "content": textContent
         ]]
+    }
+
+    private func chatCompletionsImagePart(_ input: ChatImageInput) -> [String: Any]? {
+        guard let url = input.imageURLString() else { return nil }
+        return [
+            "type": "image_url",
+            "image_url": [
+                "url": url,
+                "detail": input.detailHint.rawValue
+            ] as [String: Any]
+        ]
     }
 
     func encodeTool(_ tool: ChatToolSpec) throws -> [String: Any] {
