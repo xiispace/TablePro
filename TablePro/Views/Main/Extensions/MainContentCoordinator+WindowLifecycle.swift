@@ -29,12 +29,6 @@ extension MainContentCoordinator {
         evictionTask?.cancel()
         evictionTask = nil
 
-        let isConnected =
-            DatabaseManager.shared.activeSessions[connectionId]?.isConnected ?? false
-        if PluginManager.shared.connectionMode(for: connection.type) == .fileBased && isConnected {
-            Task { await self.refreshTablesIfStale() }
-        }
-
         syncSidebarToSelectedTab()
 
         Self.lifecycleLogger.debug(
@@ -90,11 +84,10 @@ extension MainContentCoordinator {
 
     // MARK: - Sidebar Sync
 
-    /// Update the connection-scoped sidebar selection so the active table tab
+    /// Update the window-scoped sidebar selection so the active table tab
     /// is highlighted. Reads tables fresh from the DatabaseManager because the
     /// schema load is async and may complete after focus changes.
     func syncSidebarToSelectedTab() {
-        let sidebarState = SharedSidebarState.forConnection(connectionId)
         let liveTables = DatabaseManager.shared
             .session(for: connectionId)?.tables ?? []
         let target: Set<TableInfo>
@@ -104,9 +97,9 @@ extension MainContentCoordinator {
         } else {
             target = []
         }
-        if sidebarState.selectedTables != target {
+        if windowSidebarState.selectedTables != target {
             if target.isEmpty && liveTables.isEmpty { return }
-            sidebarState.selectedTables = target
+            windowSidebarState.selectedTables = target
         }
     }
 
