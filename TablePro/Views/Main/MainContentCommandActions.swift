@@ -528,10 +528,6 @@ final class MainContentCommandActions {
         coordinator?.showServerDashboard()
     }
 
-    func openTerminal() {
-        coordinator?.openTerminal()
-    }
-
     var supportsServerDashboard: Bool {
         guard let type = coordinator?.connection.type else { return false }
         return ServerDashboardQueryProviderFactory.provider(for: type) != nil

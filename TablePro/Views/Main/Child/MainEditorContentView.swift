@@ -216,8 +216,6 @@ struct MainEditorContentView: View {
             erDiagramContent(tab: tab)
         case .serverDashboard:
             serverDashboardContent(tab: tab)
-        case .terminal:
-            terminalTabContent(tab: tab)
         }
     }
 
@@ -241,18 +239,6 @@ struct MainEditorContentView: View {
                     }
             }
         }
-        .id(tab.id)
-    }
-
-    // MARK: - Terminal Tab Content
-
-    @ViewBuilder
-    private func terminalTabContent(tab: QueryTab) -> some View {
-        TerminalTabContentView(
-            tab: tab,
-            connection: connection,
-            connectionId: connectionId
-        )
         .id(tab.id)
     }
 

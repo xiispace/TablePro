@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Removed
+
+- Removed the embedded database CLI terminal. Use your system terminal for command-line access to your databases.
+
 ## [0.43.2] - 2026-05-22
 
 ### Changed
