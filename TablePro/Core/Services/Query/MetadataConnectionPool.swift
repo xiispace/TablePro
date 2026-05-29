@@ -9,9 +9,16 @@ import Foundation
 final class MetadataConnectionPool {
     static let shared = MetadataConnectionPool()
 
+    enum Workload: Hashable, Sendable {
+        case interactive
+        case bulk
+    }
+
     private struct Key: Hashable, Sendable {
         let connectionId: UUID
         let database: String
+        let schema: String?
+        let workload: Workload
     }
 
     @MainActor
@@ -45,7 +52,7 @@ final class MetadataConnectionPool {
 
     private var entries: [Key: Entry] = [:]
     private var pending: [Key: Task<Void, Error>] = [:]
-    private let maxPerConnection = 4
+    private let maxPerConnection = 6
     private let connectTimeoutSeconds: UInt64 = 15
 
     private init() {}
@@ -53,9 +60,13 @@ final class MetadataConnectionPool {
     func withDriver<T: Sendable>(
         connectionId: UUID,
         database: String,
+        schema: String? = nil,
+        workload: Workload = .interactive,
         _ body: @Sendable @escaping (DatabaseDriver) async throws -> T
     ) async throws -> T {
-        let entry = try await acquireEntry(connectionId: connectionId, database: database)
+        let entry = try await acquireEntry(
+            connectionId: connectionId, database: database, schema: schema, workload: workload
+        )
         entry.inFlightCount += 1
         entry.lastUsed = Date()
         defer { releaseEntry(entry) }
@@ -88,8 +99,13 @@ final class MetadataConnectionPool {
         }
     }
 
-    private func acquireEntry(connectionId: UUID, database: String) async throws -> Entry {
-        let key = Key(connectionId: connectionId, database: database)
+    private func acquireEntry(
+        connectionId: UUID,
+        database: String,
+        schema: String?,
+        workload: Workload
+    ) async throws -> Entry {
+        let key = Key(connectionId: connectionId, database: database, schema: schema, workload: workload)
         if let entry = entries[key], entry.driver.status == .connected {
             return entry
         }
@@ -136,6 +152,13 @@ final class MetadataConnectionPool {
         )
         do {
             try await connectWithTimeout(driver: driver, database: key.database)
+            try? await driver.applyQueryTimeout(AppSettingsManager.shared.general.queryTimeoutSeconds)
+            await DatabaseManager.shared.executeStartupCommands(
+                session.connection.startupCommands, on: driver, connectionName: session.connection.name
+            )
+            if let schema = key.schema, let switchable = driver as? SchemaSwitchable {
+                try await switchable.switchSchema(to: schema)
+            }
         } catch {
             driver.disconnect()
             throw error
