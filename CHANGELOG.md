@@ -9,8 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Mark a table as a favorite by clicking the star button at the end of its sidebar row. Favorites are scoped to the connection, database, and schema, pinned to the top of their section, appear in a dedicated Tables group in the Favorites tab, and sync through iCloud when the Table Favorites toggle is on.
+- A plus button in the bottom bar of the Tables sidebar opens a menu to create a new table or view, without right-clicking. It's disabled while safe mode blocks writes.
 - The sidebar can show every database on the server as an expandable tree. Switch a connection between the flat list and the tree from the View menu (Sidebar Layout); right-click a database or schema to set it active. Set the default layout for new connections in Settings, General. Applies to MySQL, MariaDB, PostgreSQL, MSSQL, ClickHouse, Redshift; SQLite, Redis, MongoDB, BigQuery keep their existing sidebar. (#139)
 - A connection can read its password from a file, environment variable, or command at connect time instead of the Keychain, so scripts can provision a connection without entering the password by hand. (#1254)
+
+### Changed
+
+- The Tables sidebar bottom bar uses native macOS styling. The schema switcher is a borderless pull-down menu on the sidebar's own background instead of a wide gray bordered control, matching the Favorites footer, and switching schemas now goes through the same path as the toolbar so filters and the active tab stay in sync.
+- The Maintenance submenu in the sidebar context menu is hidden when no maintenance operations are available or the target is read-only, instead of showing an empty disabled menu.
+- The window minimum width now adjusts to the visible panes, so opening the inspector on a small window no longer pushes content off-screen.
+
+### Removed
+
+- "Create New Table…" from the sidebar right-click menu. Use the plus button in the Tables sidebar footer instead.
 
 ### Fixed
 
