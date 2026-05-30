@@ -30,6 +30,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- VoiceOver now reads the column name and current value for each field editor in the cell inspector. (#1490)
 - VoiceOver announces the active tab title when you switch between window tabs. (#1490)
 - Opening a query tab no longer pulls keyboard focus away from the sidebar or another control; the editor takes focus only when nothing else holds it. VoiceOver now labels the SQL editor and the Clear and Format buttons. (#1490)
 - The connection form opens with the Name field focused, Return or the Down arrow in the welcome search moves to the connection list, and focus returns to the list after a sheet closes, so you can set up a connection without the mouse. (#1490)
