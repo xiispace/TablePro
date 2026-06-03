@@ -34,6 +34,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The Delete shortcut in the data grid now follows a custom binding.
 - Find Next (Cmd+G) and Find Previous (Cmd+Shift+G) now work in the editor.
 - Pagination buttons no longer fire their page shortcut twice.
+- Running a PostgreSQL script with a `DO $$ ... $$` block or a dollar-quoted function body no longer fails with an unterminated dollar-quoted string error. (#1559)
 - AWS IAM connections no longer ask for a password on connect or reconnect. IAM supplies the credentials, so the prompt was never needed. The same now holds for any auth mode that replaces the password, such as a Postgres password file.
 - Oracle connection failures show the listener's actual reason (such as an unknown service name) instead of a generic "server closed the connection" message. (#483)
 
