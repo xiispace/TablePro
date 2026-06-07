@@ -172,10 +172,18 @@ struct GeneralPaneView: View {
                 }
                 ForEach(coordinator.auth.authFields, id: \.id) { field in
                     if coordinator.auth.isFieldVisible(field) {
-                        ConnectionFieldRow(
-                            field: field,
-                            value: authFieldBinding(for: field)
-                        )
+                        if FilePathConnectionFieldRow.isFilePathField(field) {
+                            FilePathConnectionFieldRow(
+                                field: field,
+                                value: authFieldBinding(for: field),
+                                onBrowse: { browseForAuthFile(field: field) }
+                            )
+                        } else {
+                            ConnectionFieldRow(
+                                field: field,
+                                value: authFieldBinding(for: field)
+                            )
+                        }
                     }
                 }
                 if coordinator.auth.usePgpass {
@@ -267,6 +275,18 @@ struct GeneralPaneView: View {
     }
 
     private func browseForFile() {
+        presentFilePanel { path in
+            coordinator.network.database = path
+        }
+    }
+
+    private func browseForAuthFile(field: ConnectionField) {
+        presentFilePanel { path in
+            coordinator.auth.additionalFieldValues[field.id] = path
+        }
+    }
+
+    private func presentFilePanel(onSelect: @escaping (String) -> Void) {
         guard let window = NSApp.keyWindow else { return }
         let panel = NSOpenPanel()
         panel.allowedContentTypes = [.database, .data]
@@ -275,7 +295,7 @@ struct GeneralPaneView: View {
 
         panel.beginSheetModal(for: window) { response in
             if response == .OK, let url = panel.url {
-                coordinator.network.database = url.path(percentEncoded: false)
+                onSelect(url.path(percentEncoded: false))
             }
         }
     }

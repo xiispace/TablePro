@@ -7,9 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- libSQL / Turso connections can open a local database file: pick Local File mode in the connection form, browse to the file, and work with it offline, transactions included. (#1607)
+
 ### Fixed
 
 - Default row sort now applies to the very first table opened after launch, not just tables opened after it. (#1603)
+- Cancelling a SQLite query no longer races a disconnect happening at the same moment. (#1610)
 
 ## [0.49.1] - 2026-06-06
 
