@@ -26,6 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Refreshing a table now reloads its data even when the previous load is still running; before, the refresh was silently dropped and the grid kept stale rows. (#1637)
 - Cmd+R on a table now reloads its rows instead of failing with a query error; the refresh was sending the database a stray cancel that aborted its own freshly-issued reload.
 - SQL autocomplete now suggests tables after JOIN. It detects the clause at the cursor across multi-join and multi-clause queries, so columns no longer appear where a table is expected, and tables lead the list. (#1646)
+- Large SQL scripts no longer freeze the editor or pin the CPU. Pasting is faster, and above 2 MB the editor suspends syntax highlighting and inline AI so typing, scrolling, and deleting stay responsive. (#1652)
 
 ### Security
 
