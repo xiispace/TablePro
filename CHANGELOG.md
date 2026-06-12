@@ -10,12 +10,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - BigQuery datasets can be switched from the toolbar, the Cmd+K switcher, and the File menu, including creating and dropping datasets. (#509)
+- Quick Switcher now searches saved queries alongside tables, views, databases, and history.
+- Quick Switcher scopes: an empty search shows your recent items with round scope buttons beside the search bar; Cmd+1 to Cmd+4 (or the buttons) browse all tables, databases, or queries.
+- Option+Return in the Quick Switcher opens the table in a new tab; right-click a result to open its structure, copy the name, or copy the query.
+- Tables already open in a tab show an Open badge in the Quick Switcher, rank higher, and Return switches to the existing tab.
 - `.psql` and `.pgsql` files now open in the SQL editor like `.sql`: Finder double-click, the open and save panels, and linked SQL folders all accept them. (#1641)
 
 ### Changed
 
 - Redis connections now filter with a key-pattern search field and a key-type scope instead of the SQL-style filter row. Patterns use glob syntax like `user:*`, are matched server-side across the whole keyspace, and the type scope narrows results by value type. The old filter row only matched one batch of keys and ignored any filter on Type, TTL, or Value.
 - Switcher, menus, and alerts now use each database's own container name: Dataset for BigQuery, Keyspace for Cassandra and ScyllaDB. (#509)
+- Quick Switcher highlights the matched characters in each result, finds better alignments for camelCase and snake_case names, and ranks items you open often and recently higher.
+- Quick Switcher now opens as a Spotlight-style floating panel over the window instead of a modal sheet: large borderless search field, rounded row selection that turns accent-colored while navigating with the keyboard, and an action hint on the selected row. On macOS 26 the panel uses Liquid Glass.
+- The sidebar filter, database switcher, and connection switcher now use the same fuzzy matching as the Quick Switcher, so abbreviations like `upv` find `user_profile_view`.
 - Refresh (Cmd+R) now acts only on the focused window's connection, instead of also reloading views and clearing autocomplete caches for every other open connection.
 - Holding Cmd+R no longer queues a backlog of refreshes that kept running after the key was released; refresh fires once per key press, and rapid presses collapse into a single reload.
 
@@ -25,6 +32,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Sorting a query result no longer overwrites the SQL editor text or the contents of an opened `.sql` file; the sort runs as a separate query and the editor keeps what you wrote. (#1645)
 - iCloud Sync between the iPhone and Mac apps: the iOS app now uses the Production CloudKit environment, so a development build no longer syncs into a separate database the Mac never reads.
 - Exports no longer fail mid-table on servers that enforce a statement time limit; the export session disables the limit and restores it afterwards, the same way mysqldump does. (#1633)
+- Quick Switcher no longer shows an empty table list when opened before the schema has finished loading.
+- Loading a saved query or history entry from the no-tabs screen now opens it in the current window instead of creating a second window tab.
+- Opening a query from history in the Quick Switcher loads the full query instead of a 100-character preview.
 - Refreshing a table now reloads its data even when the previous load is still running; before, the refresh was silently dropped and the grid kept stale rows. (#1637)
 - Cmd+R on a table now reloads its rows instead of failing with a query error; the refresh was sending the database a stray cancel that aborted its own freshly-issued reload.
 - SQL autocomplete now suggests tables after JOIN. It detects the clause at the cursor across multi-join and multi-clause queries, so columns no longer appear where a table is expected, and tables lead the list. (#1646)

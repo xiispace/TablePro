@@ -32,7 +32,6 @@ struct DisplayFormatsCacheEntry {
 /// Represents which sheet is currently active in MainContentView.
 /// Uses a single `.sheet(item:)` modifier instead of multiple `.sheet(isPresented:)`.
 enum ActiveSheet: Identifiable {
-    case quickSwitcher
     case sqlPreview
     case exportDialog
     case importDialog(formatId: String)
@@ -45,7 +44,6 @@ enum ActiveSheet: Identifiable {
 
     var id: String {
         switch self {
-        case .quickSwitcher: "quickSwitcher"
         case .sqlPreview: "sqlPreview"
         case .exportDialog: "exportDialog"
         case .importDialog(let formatId): "importDialog-\(formatId)"
@@ -149,6 +147,9 @@ final class MainContentCoordinator {
     /// Back-reference to this coordinator's command actions, enabling window → coordinator → actions
     /// lookup when `@FocusedValue(\.commandActions)` has not resolved (e.g. focus in an AppKit subview).
     @ObservationIgnored weak var commandActions: MainContentCommandActions?
+
+    /// Presents the quick switcher as a floating panel anchored over this coordinator's window.
+    @ObservationIgnored let quickSwitcherPanel = QuickSwitcherPanelController()
 
     // MARK: - Published State
 
@@ -906,6 +907,8 @@ final class MainContentCoordinator {
                 $0.content.query = query
                 $0.hasUserInteraction = true
             }
+        } else if tabManager.tabs.isEmpty {
+            tabManager.addTab(initialQuery: query, databaseName: activeDatabaseName)
         } else {
             let payload = EditorTabPayload(
                 connectionId: connection.id,
