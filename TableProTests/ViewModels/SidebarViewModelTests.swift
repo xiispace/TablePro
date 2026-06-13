@@ -11,6 +11,18 @@ import SwiftUI
 import Testing
 @testable import TablePro
 
+private final class SidebarMockClipboard: ClipboardProvider {
+    var lastWrittenText: String?
+
+    func readText() -> String? { lastWrittenText }
+    func readGridRows() -> GridRowsClipboardPayload? { nil }
+    func writeText(_ text: String) { lastWrittenText = text }
+    func writeCsv(_ csv: String) { lastWrittenText = csv }
+    func writeRows(tsv: String, html: String?, gridRows: GridRowsClipboardPayload) { lastWrittenText = tsv }
+    var hasText: Bool { lastWrittenText != nil }
+    var hasGridRows: Bool { false }
+}
+
 // MARK: - Helper
 
 /// Creates a SidebarViewModel with controllable state bindings for testing
@@ -213,38 +225,33 @@ struct SidebarViewModelTests {
     @Test("copySelectedTableNames copies sorted comma-separated names")
     @MainActor
     func copyTableNames() {
+        let original = ClipboardService.shared
+        defer { ClipboardService.shared = original }
+        let clipboard = SidebarMockClipboard()
+        ClipboardService.shared = clipboard
+
         let t1 = TestFixtures.makeTableInfo(name: "zebra")
         let t2 = TestFixtures.makeTableInfo(name: "alpha")
         let (vm, _, _, _, _, _) = makeSUT(selectedTables: [t1, t2])
 
-        NSPasteboard.general.clearContents()
         vm.copySelectedTableNames()
 
-        // Verify clipboard contains sorted names
-        let clipboard = NSPasteboard.general.string(forType: .string)
-        #expect(clipboard == "alpha,zebra")
+        #expect(clipboard.lastWrittenText == "alpha,zebra")
     }
 
     @Test("copySelectedTableNames does nothing when no selection")
     @MainActor
     func copyTableNamesNoSelection() {
-        let (vm, _, _, _, _, _) = makeSUT()
+        let original = ClipboardService.shared
+        defer { ClipboardService.shared = original }
+        let clipboard = SidebarMockClipboard()
+        ClipboardService.shared = clipboard
 
-        // Save current clipboard content
-        let previousClipboard = NSPasteboard.general.string(forType: .string)
-        NSPasteboard.general.clearContents()
+        let (vm, _, _, _, _, _) = makeSUT()
 
         vm.copySelectedTableNames()
 
-        // Clipboard should still be empty (nothing written)
-        let clipboard = NSPasteboard.general.string(forType: .string)
-        #expect(clipboard == nil)
-
-        // Restore clipboard
-        if let prev = previousClipboard {
-            NSPasteboard.general.clearContents()
-            NSPasteboard.general.setString(prev, forType: .string)
-        }
+        #expect(clipboard.lastWrittenText == nil)
     }
 }
 
