@@ -68,7 +68,8 @@ struct TriggerInfoMappingTests {
                 name: "trg_audit",
                 timing: "AFTER",
                 event: "INSERT OR UPDATE",
-                statement: "CREATE TRIGGER trg_audit ..."
+                statement: "CREATE TRIGGER trg_audit ...",
+                enabled: false
             )
         ]
         let connection = DatabaseConnection(name: "Test", type: .postgresql)
@@ -81,6 +82,21 @@ struct TriggerInfoMappingTests {
         #expect(trigger.timing == "AFTER")
         #expect(trigger.event == "INSERT OR UPDATE")
         #expect(trigger.statement == "CREATE TRIGGER trg_audit ...")
+        #expect(trigger.enabled == false)
+    }
+
+    @Test("PluginTriggerInfo carries enabled state through Codable")
+    func codableRoundTripWithEnabled() throws {
+        let original = PluginTriggerInfo(
+            name: "trg_check",
+            timing: "BEFORE",
+            event: "UPDATE",
+            statement: "CREATE TRIGGER trg_check ...",
+            enabled: true
+        )
+        let data = try JSONEncoder().encode(original)
+        let decoded = try JSONDecoder().decode(PluginTriggerInfo.self, from: data)
+        #expect(decoded.enabled == true)
     }
 }
 

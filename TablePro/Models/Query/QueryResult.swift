@@ -223,17 +223,20 @@ struct TriggerInfo: Identifiable, Hashable {
     let timing: String
     let event: String
     let statement: String
+    let enabled: Bool?
 
     init(
         name: String,
         timing: String,
         event: String,
-        statement: String
+        statement: String,
+        enabled: Bool? = nil
     ) {
         self.name = name
         self.timing = timing
         self.event = event
         self.statement = statement
+        self.enabled = enabled
     }
 }
 
