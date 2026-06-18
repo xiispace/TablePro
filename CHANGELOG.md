@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Triggers can be created, edited, and dropped from the Triggers tab. The editor opens the trigger's real definition (for PostgreSQL, its function and trigger together) so nothing is lost on save, and changes run through the usual confirmation and safe-mode checks. (#1695)
 - Traditional Chinese (繁體中文) language in Settings > General with full UI translation
 - An Add button in the table status bar inserts a new row at the end of the grid and starts editing it.
+- DuckDB connections can now reach a remote server over the Quack protocol (experimental). Pick Remote (Quack) in the connection form, enter the host, port, and token, then run SQL against the remote. Listing remote tables in the sidebar is not available yet because the Quack beta cannot enumerate a remote catalog. Needs DuckDB 1.5.3 or later. (#1716)
 
 ### Changed
 
