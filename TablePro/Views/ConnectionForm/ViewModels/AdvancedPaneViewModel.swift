@@ -9,6 +9,8 @@ import TableProPluginKit
 @Observable
 @MainActor
 final class AdvancedPaneViewModel {
+    private static let externalAccessFieldKey = "externalAccess"
+
     var additionalFieldValues: [String: String] = [:]
     var startupCommands: String = ""
     var preConnectScript: String = ""
@@ -75,7 +77,9 @@ final class AdvancedPaneViewModel {
         startupCommands = connection.startupCommands ?? ""
         preConnectScript = connection.preConnectScript ?? ""
         aiPolicy = connection.aiPolicy
-        externalAccess = connection.externalAccess
+        externalAccess = connection.additionalFields[Self.externalAccessFieldKey]
+            .flatMap(ExternalAccessLevel.init(rawValue:))
+            ?? connection.externalAccess
         localOnly = connection.localOnly
     }
 
@@ -83,5 +87,6 @@ final class AdvancedPaneViewModel {
         for (key, value) in additionalFieldValues {
             fields[key] = value
         }
+        fields[Self.externalAccessFieldKey] = externalAccess.rawValue
     }
 }
