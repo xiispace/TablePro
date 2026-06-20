@@ -75,7 +75,7 @@ final class AdvancedPaneViewModel {
         startupCommands = connection.startupCommands ?? ""
         preConnectScript = connection.preConnectScript ?? ""
         aiPolicy = connection.aiPolicy
-        externalAccess = connection.resolvedExternalAccess
+        externalAccess = connection.externalAccess
         localOnly = connection.localOnly
     }
 
@@ -83,6 +83,5 @@ final class AdvancedPaneViewModel {
         for (key, value) in additionalFieldValues {
             fields[key] = value
         }
-        fields[DatabaseConnection.persistedExternalAccessFieldKey] = externalAccess.rawValue
     }
 }

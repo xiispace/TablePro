@@ -48,7 +48,7 @@ enum MCPTabSnapshotProvider {
     @MainActor
     static func blockedExternalConnectionIds() -> Set<UUID> {
         let connections = ConnectionStorage.shared.loadConnections()
-        return Set(connections.filter { $0.resolvedExternalAccess == .blocked }.map(\.id))
+        return Set(connections.filter { $0.externalAccess == .blocked }.map(\.id))
     }
 }
 

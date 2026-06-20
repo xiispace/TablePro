@@ -10,7 +10,7 @@ public actor MCPConnectionBridge {
     func listConnections() async -> JsonValue {
         let (connections, activeSessions) = await MainActor.run {
             let conns = ConnectionStorage.shared.loadConnections()
-                .filter { $0.resolvedExternalAccess != .blocked }
+                .filter { $0.externalAccess != .blocked }
             let sessions = DatabaseManager.shared.activeSessions
             return (conns, sessions)
         }

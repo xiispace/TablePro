@@ -39,6 +39,9 @@ struct StoredConnection: Codable {
     // Safe mode level
     let safeModeLevel: String
 
+    // External client (MCP) access level
+    let externalAccess: String
+
     // AI policy
     let aiPolicy: String?
 
@@ -132,6 +135,9 @@ struct StoredConnection: Codable {
         // Safe mode level
         self.safeModeLevel = connection.safeModeLevel.rawValue
 
+        // External client (MCP) access level
+        self.externalAccess = connection.externalAccess.rawValue
+
         // AI policy
         self.aiPolicy = connection.aiPolicy?.rawValue
         self.aiRules = connection.aiRules
@@ -191,6 +197,7 @@ struct StoredConnection: Codable {
         case sslMode, sslCaCertificatePath, sslClientCertificatePath, sslClientKeyPath
         case color, tagId, groupId, sshProfileId
         case safeModeLevel
+        case externalAccess
         case isReadOnly // Legacy key for migration reading only
         case aiPolicy
         case aiRules
@@ -235,6 +242,7 @@ struct StoredConnection: Codable {
         try container.encodeIfPresent(groupId, forKey: .groupId)
         try container.encodeIfPresent(sshProfileId, forKey: .sshProfileId)
         try container.encode(safeModeLevel, forKey: .safeModeLevel)
+        try container.encode(externalAccess, forKey: .externalAccess)
         try container.encodeIfPresent(aiPolicy, forKey: .aiPolicy)
         try container.encodeIfPresent(aiRules, forKey: .aiRules)
         try container.encodeIfPresent(aiAlwaysAllowedTools, forKey: .aiAlwaysAllowedTools)
@@ -300,6 +308,9 @@ struct StoredConnection: Codable {
             let wasReadOnly = try container.decodeIfPresent(Bool.self, forKey: .isReadOnly) ?? false
             safeModeLevel = wasReadOnly ? SafeModeLevel.readOnly.rawValue : SafeModeLevel.silent.rawValue
         }
+        externalAccess = try container.decodeIfPresent(
+            String.self, forKey: .externalAccess
+        ) ?? ExternalAccessLevel.readOnly.rawValue
         aiPolicy = try container.decodeIfPresent(String.self, forKey: .aiPolicy)
         aiRules = try container.decodeIfPresent(String.self, forKey: .aiRules)
         aiAlwaysAllowedTools = try container.decodeIfPresent([String].self, forKey: .aiAlwaysAllowedTools)
@@ -416,6 +427,7 @@ struct StoredConnection: Codable {
             aiPolicy: parsedAIPolicy,
             aiRules: aiRules,
             aiAlwaysAllowedTools: Set(aiAlwaysAllowedTools ?? []),
+            externalAccess: ExternalAccessLevel(rawValue: externalAccess) ?? .readOnly,
             redisDatabase: redisDatabase,
             startupCommands: startupCommands,
             sortOrder: sortOrder,

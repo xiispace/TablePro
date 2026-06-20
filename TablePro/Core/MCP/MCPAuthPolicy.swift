@@ -263,14 +263,14 @@ public actor MCPAuthPolicy {
                 let conn = session.connection
                 return MCPConnectionAuthSnapshot(
                     policy: conn.aiPolicy ?? AppSettingsManager.shared.ai.defaultConnectionPolicy,
-                    externalAccess: conn.resolvedExternalAccess,
+                    externalAccess: conn.externalAccess,
                     name: conn.name,
                     databaseType: conn.type.rawValue
                 )
             case .stored(let conn):
                 return MCPConnectionAuthSnapshot(
                     policy: conn.aiPolicy ?? AppSettingsManager.shared.ai.defaultConnectionPolicy,
-                    externalAccess: conn.resolvedExternalAccess,
+                    externalAccess: conn.externalAccess,
                     name: conn.name,
                     databaseType: conn.type.rawValue
                 )
