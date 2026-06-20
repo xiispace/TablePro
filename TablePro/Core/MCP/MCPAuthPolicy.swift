@@ -26,7 +26,6 @@ typealias MCPConnectionSnapshotResolver = @Sendable (UUID) async -> MCPConnectio
 
 public actor MCPAuthPolicy {
     private static let logger = Logger(subsystem: "com.TablePro", category: "MCPAuthPolicy")
-    private static let persistedExternalAccessFieldKey = "externalAccess"
 
     private let connectionResolver: MCPConnectionSnapshotResolver
 
@@ -257,12 +256,6 @@ public actor MCPAuthPolicy {
         return nil
     }
 
-    private static func resolvedExternalAccess(for connection: DatabaseConnection) -> ExternalAccessLevel {
-        connection.additionalFields[persistedExternalAccessFieldKey]
-            .flatMap(ExternalAccessLevel.init(rawValue:))
-            ?? connection.externalAccess
-    }
-
     private static let defaultConnectionResolver: MCPConnectionSnapshotResolver = { connectionId in
         await MainActor.run {
             switch DatabaseManager.shared.connectionState(connectionId) {
@@ -270,14 +263,14 @@ public actor MCPAuthPolicy {
                 let conn = session.connection
                 return MCPConnectionAuthSnapshot(
                     policy: conn.aiPolicy ?? AppSettingsManager.shared.ai.defaultConnectionPolicy,
-                    externalAccess: resolvedExternalAccess(for: conn),
+                    externalAccess: conn.resolvedExternalAccess,
                     name: conn.name,
                     databaseType: conn.type.rawValue
                 )
             case .stored(let conn):
                 return MCPConnectionAuthSnapshot(
                     policy: conn.aiPolicy ?? AppSettingsManager.shared.ai.defaultConnectionPolicy,
-                    externalAccess: resolvedExternalAccess(for: conn),
+                    externalAccess: conn.resolvedExternalAccess,
                     name: conn.name,
                     databaseType: conn.type.rawValue
                 )
